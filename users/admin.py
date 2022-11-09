@@ -2,14 +2,29 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from .models import User
 
+
 @admin.register(User)
 class CustomUserAdmin(UserAdmin):
     fieldsets = (
-        ("Profile", {
-                "fields": ("username", "password", "name", "email", "is_host"),
+        (
+            "Profile",
+            {
+                "fields": (
+                    "avartar",
+                    "username",
+                    "password",
+                    "name",
+                    "email",
+                    "is_host",
+                    "gender",
+                    "language",
+                    "currency",
+                ),
             },
         ),
-        ("Permissions",{
+        (
+            "Permissions",
+            {
                 "fields": (
                     "is_active",
                     "is_staff",
@@ -19,12 +34,12 @@ class CustomUserAdmin(UserAdmin):
                 ),
             },
         ),
-        ("Important dates",{
-            "fields": (
-                "last_login", "date_joined"
-                ),
+        (
+            "Important dates",
+            {
+                "fields": ("last_login", "date_joined"),
             },
         ),
     )
-    
+
     list_display = ("username", "email", "name", "is_host")

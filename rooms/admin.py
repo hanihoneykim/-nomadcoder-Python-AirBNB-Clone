@@ -15,6 +15,7 @@ class RoomAdmin(admin.ModelAdmin):
     actions = (reset_prices,)
 
     list_display = (
+        "pk",
         "name",
         "price",
         "kind",
@@ -39,5 +40,5 @@ class RoomAdmin(admin.ModelAdmin):
 
 @admin.register(Amenity)
 class AmenityAdmin(admin.ModelAdmin):
-    list_display = ("name", "description", "created_at", "updated_at")
+    list_display = ("pk", "name", "description", "created_at", "updated_at")
     readonly_fields = ("created_at", "updated_at")

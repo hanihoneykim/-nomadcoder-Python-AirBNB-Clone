@@ -95,13 +95,13 @@ class RoomDetail(APIView):
                         room = serializer.save()
                     amenities = request.data.get("amenities")
                     if amenities:
-                        for amenity_pk in amenities:  # many to many
+                        room.amenities.clear()
+                        for amenity_pk in amenities:
                             amenity = Amenity.objects.get(pk=amenity_pk)
                             room.amenities.add(amenity)
-                        serializer = RoomDetailSerializer(room)
-                        return Response(serializer.data)
+                    return Response(RoomDetailSerializer(room).data)
             except Exception:
-                raise ParseError("Amenity not found")
+                raise ParseError("amenity not found")
         else:
             return Response(serializer.errors)
 

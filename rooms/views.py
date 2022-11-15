@@ -1,3 +1,4 @@
+from django.db import transaction
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.exceptions import NotFound, NotAuthenticated, ParseError
@@ -27,19 +28,20 @@ class Rooms(APIView):
                         raise ParseError("The category kind should be 'rooms'")
                 except Category.DoesNotExist:
                     raise ParseError("Category not found")
-                updated_room = serializer.save(
-                    owner=request.user,
-                    category=category,
-                )
-                amenities = request.data.get("amenities")
-                for amenity_pk in amenities:
-                    try:
-                        amenity = Amenity.objects.get(pk=amenity_pk)
-                    except Amenity.DoesNotExist:
-                        updated_room.delete()
-                        raise ParseError(f"Amenity with id {amenity_pk} not found")
-                    updated_room.amenities.add(amenity)
-                return Response(RoomDetailSerializer(updated_room).data)
+                try:
+                    with transaction.atomic():
+                        updated_room = serializer.save(
+                            owner=request.user,
+                            category=category,
+                        )
+                        amenities = request.data.get("amenities")
+                        for amenity_pk in amenities:
+                            amenity = Amenity.objects.get(pk=amenity_pk)
+                            updated_room.amenities.add(amenity)
+                        serializer = RoomDetailSerializer(updated_room)
+                        return Response(serializer.data)
+                except Exception:
+                    raise ParseError("Amenity not found")
             else:
                 return Response(serializer.errors)
         else:

@@ -24,7 +24,7 @@ class User(AbstractUser):
         max_length=150,
         editable=False,
     )
-    avartar = models.ImageField(
+    avartar = models.URLField(
         blank=True,
     )
     name = models.CharField(

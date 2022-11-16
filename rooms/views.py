@@ -42,7 +42,10 @@ class Rooms(APIView):
                         for amenity_pk in amenities:
                             amenity = Amenity.objects.get(pk=amenity_pk)
                             updated_room.amenities.add(amenity)
-                        serializer = RoomDetailSerializer(updated_room)
+                        serializer = RoomDetailSerializer(
+                            updated_room,
+                            context={"request": request},
+                        )
                         return Response(serializer.data)
                 except Exception:
                     raise ParseError("Amenity not found")
@@ -99,8 +102,14 @@ class RoomDetail(APIView):
                         for amenity_pk in amenities:
                             amenity = Amenity.objects.get(pk=amenity_pk)
                             room.amenities.add(amenity)
-                    return Response(RoomDetailSerializer(room).data)
-            except Exception:
+                    return Response(
+                        RoomDetailSerializer(
+                            room,
+                            context={"request": request},
+                        ).data
+                    )
+            except Exception as e:
+                print(e)
                 raise ParseError("amenity not found")
         else:
             return Response(serializer.errors)
